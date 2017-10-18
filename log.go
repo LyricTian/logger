@@ -6,7 +6,14 @@ import (
 	"os"
 )
 
-var l = NewStdLogger(true, true, true, true, true)
+// Defines the log format
+const (
+	TimeFlag     = log.LstdFlags | log.Lmicroseconds
+	FileFlag     = log.Lshortfile
+	TimeFileFlag = TimeFlag | FileFlag
+)
+
+var l = NewStdLogger(true, true, true, true, TimeFlag)
 
 // Logger A Logger represents an active logging object that generates lines of output to an io.Writer.
 type Logger struct {
@@ -21,19 +28,14 @@ type Logger struct {
 }
 
 // NewStdLogger creates a logger with output directed to Stderr
-func NewStdLogger(time, debug, trace, colors, pid bool) *Logger {
-	flags := 0
-	if time {
-		flags = log.LstdFlags | log.Lmicroseconds
-	}
-
+func NewStdLogger(debug, trace, colors, pid bool, flag int) *Logger {
 	pre := ""
 	if pid {
 		pre = pidPrefix()
 	}
 
 	l := &Logger{
-		logger: log.New(os.Stderr, pre, flags),
+		logger: log.New(os.Stderr, pre, flag),
 		debug:  debug,
 		trace:  trace,
 	}
@@ -48,16 +50,11 @@ func NewStdLogger(time, debug, trace, colors, pid bool) *Logger {
 }
 
 // NewFileLogger creates a logger with output directed to a file
-func NewFileLogger(filename string, time, debug, trace, pid bool) *Logger {
+func NewFileLogger(filename string, debug, trace, pid bool, flag int) *Logger {
 	fileflags := os.O_WRONLY | os.O_APPEND | os.O_CREATE
 	f, err := os.OpenFile(filename, fileflags, 0660)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
-	}
-
-	flags := 0
-	if time {
-		flags = log.LstdFlags | log.Lmicroseconds
 	}
 
 	pre := ""
@@ -66,7 +63,7 @@ func NewFileLogger(filename string, time, debug, trace, pid bool) *Logger {
 	}
 
 	l := &Logger{
-		logger: log.New(f, pre, flags),
+		logger: log.New(f, pre, flag),
 		debug:  debug,
 		trace:  trace,
 	}
