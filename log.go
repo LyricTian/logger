@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+var l = NewStdLogger(true, true, true, true, true)
+
 // Logger A Logger represents an active logging object that generates lines of output to an io.Writer.
 type Logger struct {
 	logger     *log.Logger
@@ -73,6 +75,11 @@ func NewFileLogger(filename string, time, debug, trace, pid bool) *Logger {
 	return l
 }
 
+// SetLogger specify one Logger
+func SetLogger(logger *Logger) {
+	l = logger
+}
+
 // generate the pid prefix string
 func pidPrefix() string {
 	return fmt.Sprintf("[%d] ", os.Getpid())
@@ -96,9 +103,15 @@ func setColoredLabelFormats(l *Logger) {
 }
 
 // Infof logs a notice statement
+func Infof(format string, v ...interface{}) { l.Infof(format, v...) }
+
+// Infof logs a notice statement
 func (l *Logger) Infof(format string, v ...interface{}) {
 	l.logger.Printf(l.infoLabel+format, v...)
 }
+
+// Errorf logs an error statement
+func Errorf(format string, v ...interface{}) { l.Errorf(format, v...) }
 
 // Errorf logs an error statement
 func (l *Logger) Errorf(format string, v ...interface{}) {
@@ -106,9 +119,15 @@ func (l *Logger) Errorf(format string, v ...interface{}) {
 }
 
 // Fatalf logs a fatal error
+func Fatalf(format string, v ...interface{}) { l.Fatalf(format, v...) }
+
+// Fatalf logs a fatal error
 func (l *Logger) Fatalf(format string, v ...interface{}) {
 	l.logger.Fatalf(l.fatalLabel+format, v...)
 }
+
+// Debugf logs a debug statement
+func Debugf(format string, v ...interface{}) { l.Debugf(format, v...) }
 
 // Debugf logs a debug statement
 func (l *Logger) Debugf(format string, v ...interface{}) {
@@ -116,6 +135,9 @@ func (l *Logger) Debugf(format string, v ...interface{}) {
 		l.logger.Printf(l.debugLabel+format, v...)
 	}
 }
+
+// Tracef logs a trace statement
+func Tracef(format string, v ...interface{}) { l.Tracef(format, v...) }
 
 // Tracef logs a trace statement
 func (l *Logger) Tracef(format string, v ...interface{}) {
