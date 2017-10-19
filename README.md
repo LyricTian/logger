@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-	log := logger.NewStdLogger(true, true, true, true, true)
+	log := logger.NewStdLogger(true, true, true, true, logger.TimeFlag)
 	log.Debugf("hello,%s", "world")
 	log.Tracef("hello,%s", "world")
 	log.Infof("hello,%s", "world")
