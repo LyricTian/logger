@@ -20,6 +20,7 @@ type Logger struct {
 	logger     *log.Logger
 	debug      bool
 	trace      bool
+	calldepth  int
 	infoLabel  string
 	errorLabel string
 	fatalLabel string
@@ -99,12 +100,22 @@ func setColoredLabelFormats(l *Logger) {
 	l.traceLabel = fmt.Sprintf(colorFormat, 33, "TRC")
 }
 
+// SetCallDepth set call depth
+func (l *Logger) SetCallDepth(calldepth int) {
+	l.calldepth = calldepth
+}
+
+// Printf print to the logger
+func (l *Logger) Printf(format string, v ...interface{}) {
+	l.logger.Output(l.calldepth, fmt.Sprintf(format, v...))
+}
+
 // Infof logs a notice statement
 func Infof(format string, v ...interface{}) { l.Infof(format, v...) }
 
 // Infof logs a notice statement
 func (l *Logger) Infof(format string, v ...interface{}) {
-	l.logger.Printf(l.infoLabel+format, v...)
+	l.Printf(l.infoLabel+format, v...)
 }
 
 // Errorf logs an error statement
@@ -112,7 +123,7 @@ func Errorf(format string, v ...interface{}) { l.Errorf(format, v...) }
 
 // Errorf logs an error statement
 func (l *Logger) Errorf(format string, v ...interface{}) {
-	l.logger.Printf(l.errorLabel+format, v...)
+	l.Printf(l.errorLabel+format, v...)
 }
 
 // Fatalf logs a fatal error
@@ -120,7 +131,7 @@ func Fatalf(format string, v ...interface{}) { l.Fatalf(format, v...) }
 
 // Fatalf logs a fatal error
 func (l *Logger) Fatalf(format string, v ...interface{}) {
-	l.logger.Fatalf(l.fatalLabel+format, v...)
+	l.Fatalf(l.fatalLabel+format, v...)
 }
 
 // Debugf logs a debug statement
@@ -129,7 +140,7 @@ func Debugf(format string, v ...interface{}) { l.Debugf(format, v...) }
 // Debugf logs a debug statement
 func (l *Logger) Debugf(format string, v ...interface{}) {
 	if l.debug {
-		l.logger.Printf(l.debugLabel+format, v...)
+		l.Printf(l.debugLabel+format, v...)
 	}
 }
 
@@ -139,6 +150,6 @@ func Tracef(format string, v ...interface{}) { l.Tracef(format, v...) }
 // Tracef logs a trace statement
 func (l *Logger) Tracef(format string, v ...interface{}) {
 	if l.trace {
-		l.logger.Printf(l.traceLabel+format, v...)
+		l.Printf(l.traceLabel+format, v...)
 	}
 }
