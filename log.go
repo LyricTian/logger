@@ -131,7 +131,8 @@ func Fatalf(format string, v ...interface{}) { l.Fatalf(format, v...) }
 
 // Fatalf logs a fatal error
 func (l *Logger) Fatalf(format string, v ...interface{}) {
-	l.Fatalf(l.fatalLabel+format, v...)
+	l.Printf(l.fatalLabel+format, v...)
+	os.Exit(1)
 }
 
 // Debugf logs a debug statement
